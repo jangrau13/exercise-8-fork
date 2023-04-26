@@ -2,6 +2,10 @@
 
 
 /* Initial beliefs and rules */
+role_goal(R, G) :- role_mission(R, _, M) & mission_goal(M, G).
+can_achieve (G) :- .relevant_plans({+!G[scheme(_)]}, LP) & LP \== [].
+i_have_plans_for(R) :- not (role_goal(R, G) & not can_achieve(G)).
+
 
 /* Initial goals */
 !start. // the agent has the goal to start
@@ -15,6 +19,35 @@
 @start_plan
 +!start : true <-
 	.print("Hello world").
+
++newOrg(WspName, OrgName) : true <-
+	joinWorkspace(WspName, WspId);
+	lookupArtifact(OrgName, OrgArtId);
+	focus(OrgArtId);
+	!focus_my_friend;
+	!adopt_overcome;
+	.print("focusing on ", OrgName).
+
+
+ +!focus_my_friend : group(GrpName, _, _) & scheme(SchemeName, _, _) <-
+	lookupArtifact(GrpName, GrpId);
+	focus(GrpId);
+	lookupArtifact(SchemeName, SchemeId);
+	focus(SchemeId);
+	.print("focused my friend: ", GrpId).
+
+
+//react to I have a plan for
+//	adoptRole(G);
++!adopt_overcome : role_goal(R, G) & can_achieve(G) <-
+	adoptRole(R);
+	.print("adopted role ", R).
+
+/*
++!adopt_overcome : can_achieve (G) & role_goal(R, G) <-
+	.print("role ", R);
+	.print("goal ", G).
+	*/
 
 /* 
  * Plan for reacting to the addition of the goal !read_temperature
