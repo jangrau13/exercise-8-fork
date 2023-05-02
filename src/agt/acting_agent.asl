@@ -58,7 +58,7 @@ can_achieve(G) :- .relevant_plans({+!G[scheme(_)]}, LP) & LP \== [].
 	 * follow the instructions here: https://github.com/HSG-WAS-SS23/exercise-8/blob/main/README.md#test-with-the-real-phantomx-reactor-robot-arm
 	 */
 	// creates a ThingArtifact based on the TD of the robotic arm
-	makeArtifact("leubot1", "wot.ThingArtifact", [Location, false], Leubot1Id); 
+	makeArtifact("leubot1", "wot.ThingArtifact", [Location, true], Leubot1Id); 
 	
 	// sets the API key for controlling the robotic arm as an authenticated user
 	setAPIKey("633ecde7062ad02a758e713d4064a13e")[artifact_id(leubot1)];
