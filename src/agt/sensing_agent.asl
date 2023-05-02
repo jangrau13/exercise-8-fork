@@ -3,7 +3,7 @@
 
 /* Initial beliefs and rules */
 role_goal(R, G) :- role_mission(R, _, M) & mission_goal(M, G).
-can_achieve (G) :- .relevant_plans({+!G[scheme(_)]}, LP) & LP \== [].
+can_achieve(G) :- .relevant_plans({+!G[scheme(_)]}, LP) & LP \== [].
 i_have_plans_for(R) :- not (role_goal(R, G) & not can_achieve(G)).
 
 

@@ -4,6 +4,8 @@
 // that describes a Thing of type https://ci.mines-stetienne.fr/kg/ontology#PhantomX
 robot_td("https://raw.githubusercontent.com/Interactions-HSG/example-tds/main/tds/leubot1.ttl").
 
+can_achieve(G) :- .relevant_plans({+!G[scheme(_)]}, LP) & LP \== [].
+
 /* Initial goals */
 !start. // the agent has the goal to start
 
@@ -16,6 +18,24 @@ robot_td("https://raw.githubusercontent.com/Interactions-HSG/example-tds/main/td
 @start_plan
 +!start : true <-
 	.print("Hello world").
+
+
++actionNeeded(WspName, OrgName, OpenGoal, OpenRole) : true <-
+	joinWorkspace(WspName, WspId);
+	lookupArtifact(OrgName, OrgArtId);
+	focus(OrgArtId);
+	!focus_my_friend(OpenGoal, OpenRole);
+	.print("focusing on ", OrgName).
+
+ +!focus_my_friend(OpenGoal, OpenRole) : group(GrpName, _, _) & scheme(SchemeName, _, _) <-
+	lookupArtifact(GrpName, Grp2Id);
+	focus(Grp2Id);
+	lookupArtifact(SchemeName, Scheme2Id);
+	focus(Scheme2Id);
+	.print("focused my friend: ", GrpId);
+	?can_achieve(OpenGoal);
+	adoptRole(OpenRole);
+	.print("adopted role ", OpenRole).
 
 
 /* 
@@ -38,10 +58,10 @@ robot_td("https://raw.githubusercontent.com/Interactions-HSG/example-tds/main/td
 	 * follow the instructions here: https://github.com/HSG-WAS-SS23/exercise-8/blob/main/README.md#test-with-the-real-phantomx-reactor-robot-arm
 	 */
 	// creates a ThingArtifact based on the TD of the robotic arm
-	makeArtifact("leubot1", "org.hyperagents.jacamo.artifacts.wot.ThingArtifact", [Location, true], Leubot1Id); 
+	makeArtifact("leubot1", "wot.ThingArtifact", [Location, false], Leubot1Id); 
 	
 	// sets the API key for controlling the robotic arm as an authenticated user
-	//setAPIKey("77d7a2250abbdb59c6f6324bf1dcddb5")[artifact_id(leubot1)];
+	setAPIKey("633ecde7062ad02a758e713d4064a13e")[artifact_id(leubot1)];
 
 	// invokes the action onto:SetWristAngle for manifesting the temperature with the wrist of the robotic arm
 	invokeAction("https://ci.mines-stetienne.fr/kg/ontology#SetWristAngle", ["https://www.w3.org/2019/wot/json-schema#IntegerSchema"], [Degrees])[artifact_id(leubot1)].
